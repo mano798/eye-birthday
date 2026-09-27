@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوست عيد ميلad - EYE</title>
+    <!-- مكتبة html2canvas لتحويل البطاقة إلى صورة عند التحميل -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #feada6 100%);
+            background-size: cover;
+            padding: 20px;
+        }
+
+        /* البطاقة الرئيسية */
+        .card {
+            background-color: #1a192b;
+            color: #ffffff;
+            width: 380px;
+            max-width: 95vw;
+            padding: 35px 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            position: relative;
+        }
+
+        /* الزر المخفي في كلمة EYE */
+        .secret-trigger {
+            color: #a855f7;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            margin-bottom: 10px;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .secret-trigger:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .card h1 {
+            font-size: 26px;
+            margin-bottom: 25px;
+            font-weight: 800;
+        }
+
+        /* إطار الصورة الشخصية */
+        .avatar-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            border: 4px solid #a855f7;
+            overflow: hidden;
+            background-color: #2a2942;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+            position: relative;
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .member-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            min-height: 32px;
+        }
+
+        .sub-text {
+            color: #a855f7;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* منطقة التحكم والإدخال (تظهر فقط بعد إدخال الباسورد الصحيح) */
+        .admin-panel {
+            display: none;
+            border-top: 1px dashed #475569;
+            padding-top: 20px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            background-color: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #7c3aed;
+        }
+
+        .btn-success {
+            background-color: #10b981;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-whatsapp {
+            background-color: #25d366;
+            color: #ffffff;
+            margin-top: 5px;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #1eb857;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .input-text {
+            width: 100%;
+            padding: 11px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background-color: #0f172a;
+            color: white;
+            text-align: center;
+            margin-bottom: 12px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .input-text:focus {
+            border-color: #a855f7;
+        }
+
+        /* نافذة كلمة السر */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .share-box {
+            margin-top: 15px;
+            width: 380px;
+            max-width: 95vw;
+            background: rgba(26, 25, 43, 0.9);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="birthdayCard">
+        <!-- الزر المخفي: كلمة EYE -->
+        <div class="secret-trigger" onclick="openPasswordModal()">👁️ EYE 👁️</div>
+        
+        <h1>كل سنة وانت طيب!</h1>
+
+        <div class="avatar-container">
+            <img id="avatarImg" src="" style="display: none;">
+            <span id="avatarText" class="avatar-placeholder">صورة العضو</span>
+        </div>
+
+        <div class="member-name" id="memberName">اسم العضو</div>
+        <div class="sub-text">🎉 عيد ميلاد سعيد 🎉</div>
+
+        <!-- لوحة التعديل للأعضاء المصرح لهم فقط -->
+        <div class="admin-panel" id="adminPanel">
+            <button class="btn" onclick="document.getElementById('fileInput').click()">تعديل الصورة والاسم</button>
+            <input type="file" id="fileInput" accept="image/*" onchange="loadAvatar(event)">
+            
+            <input type="text" id="nameInput" class="input-text" placeholder="اكتب اسم العضو هنا" oninput="updateName()">
+            
+            <button class="btn btn-success" onclick="downloadCard()">حفظ الصورة جهازك</button>
+            <button class="btn btn-whatsapp" onclick="shareToWhatsApp()">مشاركة رابط البطاقة للواتساب 📲</button>
+        </div>
+    </div>
+
+    <!-- نافذة كلمة المرور -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <h3 style="color: white; margin-bottom: 15px;">كلمة المرور للتعديل</h3>
+            <input type="password" id="passInput" class="input-text" placeholder="ادخل كلمة السر" onkeypress="handleKeyPress(event)">
+            <button class="btn" onclick="checkPassword()">تأكيد</button>
+            <button class="btn" style="background: #64748b; margin-bottom: 0;" onclick="closePasswordModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        const SECRET_PASS = "EYEALEX"; // كلمة السر المعتمدة
+
+        // فتح وإغلاق نافذة الباسورد
+        function openPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('passInput').focus();
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passInput').value = '';
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        }
+
+        // التحقق من كلمة السر
+        function checkPassword() {
+            const input = document.getElementById('passInput').value;
+            if (input === SECRET_PASS) {
+                document.getElementById('adminPanel').style.display = 'block';
+                closePasswordModal();
+            } else {
+                alert('كلمة المرور غير صحيحة!');
+            }
+        }
+
+        // تحميل صورة العضو مع تخزين البيانات في الرابط (URL Data)
+        function loadAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgData = e.target.result;
+                setAvatar(imgData);
+                updateURLParam('img', imgData);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setAvatar(src) {
+            const img = document.getElementById('avatarImg');
+            img.src = src;
+            img.style.display = 'block';
+            document.getElementById('avatarText').style.display = 'none';
+        }
+
+        // تحديث الاسم
+        function updateName() {
+            const name = document.getElementById('nameInput').value;
+            const displayName = name || "اسم العضو";
+            document.getElementById('memberName').innerText = displayName;
+            updateURLParam('name', encodeURIComponent(name));
+        }
+
+        // حفظ الصورة إلى الجهاز
+        function downloadCard() {
+            const adminPanel = document.getElementById('adminPanel');
+            adminPanel.style.display = 'none';
+            
+            html2canvas(document.getElementById('birthdayCard')).then(canvas => {
+                let link = document.createElement('a');
+                link.download = `عيد_ميلاد_${document.getElementById('memberName').innerText}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+                adminPanel.style.display = 'block';
+            });
+        }
+
+        // مشاركة الرابط عبر الواتساب
+        function shareToWhatsApp() {
+            const currentURL = window.location.href;
+            const name = document.getElementById('memberName').innerText;
+            const text = `🎉 كل سنة وانت طيب يا ${name}! 🎂\nشاهد تهنئة عيد الميلاد من EYE:\n${currentURL}`;
+            const whatsappURL = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+            window.open(whatsappURL, '_blank');
+        }
+
+        // إدارة إرسال واستقبال البيانات داخل الرابط (URL Parameters)
+        function updateURLParam(key, value) {
+            const url = new URL(window.location.href);
+            url.searchParams.set(key, value);
+            window.history.replaceState({}, '', url.toString());
+        }
+
+        // عند فتح الرابط: قراءة الصورة والاسم المرفقين في الرابط مباشرة
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameParam = urlParams.get('name');
+            const imgParam = urlParams.get('img');
+
+            if (nameParam) {
+                const decodedName = decodeURIComponent(nameParam);
+                document.getElementById('memberName').innerText = decodedName;
+                document.getElementById('nameInput').value = decodedName;
+            }
+
+            if (imgParam) {
+                setAvatar(imgParam);
+            }
+        };
+    </script>
+</body>
+</html>
